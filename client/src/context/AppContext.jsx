@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { dummyCourses } from "../assets/assets";
-
+import humanizeDuration from 'humanize-duration'
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
@@ -16,17 +16,6 @@ export const AppContextProvider = (props) => {
     setAllCourses(dummyCourses)
   }
 
-  // function to calculate avg rating of course
-  // const calculateRating=(course)=>{
-  //   if(course.courseRating.length===0){
-  //     return 0;
-  //   }
-  //   let totalRating=0
-  //   course.courseRating.forEach(rating=>{
-  //     totalRating+=rating.rating
-  //   })
-  //   return totalRating/course.courseRating.length
-  // }
 
   const calculateRating = (course) => {
     if (!course.courseRating || course.courseRating.length === 0) {
@@ -40,6 +29,35 @@ export const AppContextProvider = (props) => {
   
     return totalRating / course.courseRating.length;
   };  
+
+  // calculate chaptertime
+  const calculateChapterTime=(chapter)=>{
+    let time = 0
+    chapter.chapterContent.map((lecture)=>{
+      time+=lecture.lectureDuration
+    })
+    return humanizeDuration(time*60*1000,{units:["h","m"]})
+  }
+
+  // calculate the course duration
+  const calculateCourseDuration=(course)=>{
+    let time=0
+    course.courseContent.map((chapter)=>chapter.chapterContent.map(
+      (lecture)=>time+=lecture.lectureDuration
+    ))
+    return humanizeDuration(time*60*1000,{units:["h","m"]})
+  }
+
+  // calculate number of lectures of this course 
+  const calculateNoOfLectures=()=>{
+    let totalLectures = 0;
+    course.courseContent.forEach(chapter=>{
+      if(Array.isArray(chapter.chapterContent)){
+        totalLectures+=chapter.chapterContent.length
+      }
+    });
+    return totalLectures;
+  }
   
   useEffect(()=>{
     fetchAllCourses()
@@ -49,7 +67,10 @@ export const AppContextProvider = (props) => {
     allCourses,
     calculateRating,
     isEducator,
-    setIsEducator
+    setIsEducator,
+    calculateChapterTime,
+    calculateNoOfLectures,
+    calculateCourseDuration
 
   };
 
