@@ -9,8 +9,9 @@ const CourseDetail = () => {
   const { id } = useParams();
 
   const [courseData, setCourseData] = useState(null);
+  const [openSection,setOpentSection]=useState({})
 
-  const { allCourses, calculateRating ,calculateCourseDuration,calculateNoOfLectures,calculateChapterTime} = useContext(AppContext);
+  const { allCourses, calculateRating ,calculateCourseDuration,calculateNoOfLectures,calculateChapterTime,currency} = useContext(AppContext);
 
   const fetchCourseData = async () => {
     const findCourse = allCourses.find(course => course._id === id);
@@ -20,6 +21,14 @@ const CourseDetail = () => {
   useEffect(() => {
     fetchCourseData();
   }, []);
+
+  const toggleSection=(index)=>{
+    setOpentSection((prev)=>(
+      {...prev,[index]:!prev[index],
+
+      }
+    ))
+  }
 
   return courseData ? (
     <>
@@ -68,16 +77,20 @@ const CourseDetail = () => {
                     <div
                     className='border border-gray-300 bg-white mb-2 rouded'
                     key={index}>
-                      <div className='flex items-center justify-between px-4 py-3 cursor-pointer select-none'>
+                      <div className='flex items-center justify-between px-4 py-3 cursor-pointer select-none'
+                      onClick={()=>toggleSection(index)}
+                      >
                         <div className='flex items-center gap-2'>
 
-                          <img src={assets.down_arrow_icon} alt="arrow icon" />
+                          <img
+                          className={`transform transition-transform ${openSection[index]? 'rotate-180':''}`}
+                          src={assets.down_arrow_icon} alt="arrow icon" />
                           <p className='font-medium md:text-base text-sm'>{chapter.chapterTitle}</p>
 
                         </div>
                         <p className='text-sm md:text-defauld'>{chapter.chapterContent.length}lectures - {calculateChapterTime(chapter)}</p>
                       </div>
-                      <div className='overflow-hidden transition-all duration-300 max-h-96'>
+                      <div className={`overflow-hidden transition-all duration-300 ${openSection[index] ? 'max-h-96': 'max-h-0'}`}>
                         <ul className='list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border-t border-gray-300'>
                           {chapter.chapterContent.map((lecture,i)=>(
                             <li key={i} className='flex items-start gap-2 py-1'>
@@ -97,11 +110,43 @@ const CourseDetail = () => {
                   ))}
                 </div>
               </div>
+              <div className='py-20 text-sm md:text-default'>
+                <h3 className='text-xl font-semibold text-gray-800'>Course Description</h3>
+                <p
+            className="pt-3 ritch-text"
+            dangerouslySetInnerHTML={{
+              __html: courseData.courseDescription
+            }}
+          ></p>
+              </div>
         </div>
 
         {/* right column */}
-        <div className="z-10">
-          {/* Add your right column content here if needed */}
+        {/* <div className="max-w-course-cart z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px] "> */}
+        <div
+  className="w-[441px] pb-[5px] max-w-course-cart z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-gray-300 min-w-[300px] sm:min-w-[420px]"
+>
+  {/* Your content here */}
+{/* </div> */}
+
+          <img src={courseData.courseThumbnail} alt="" />
+          <div className='p-5'>
+              <div className='flex items-center gap-2'>
+                <img src={assets.time_left_clock_icon} alt="" />
+                <p className='text-red-500'> <span>5 days</span>  left at this price !</p>
+              </div>
+              <div className='flex gap-3 items-center pt-2'>
+                <p className='text-gray-800 md:text-4xl text-2xl font-semibold'>{currency}{(courseData.coursePrice - courseData.discount*courseData.coursePrice/100).toFixed(2)}</p>
+                <p className='md:text-lg text-gray=500 line-through'>{currency}{courseData.coursePrice}</p>
+                <p className='md:text-lg text-gray-500'>{courseData.discount}%off</p>
+              </div>
+              <div className='flex items-center text-sm md:text-default gap-4 pt-2 md:pt-4 text-gray-500'>
+              <div className='flex items-center gap-1'>
+                <img src={assets.star} alt="" />
+                <p>{calculateRating(courseData)}</p>
+              </div>
+              </div>
+          </div>
         </div>
       </div>
     </>
