@@ -4,12 +4,16 @@ import { AppContext } from '../../context/AppContext';
 import Loading from './../../components/students/Loading';
 import { assets } from '../../assets/assets';
 import humanizeDuration from 'humanize-duration';
+import Footer from '../../components/students/Footer'
+import YouTube from 'react-youtube'
 
 const CourseDetail = () => {
   const { id } = useParams();
 
   const [courseData, setCourseData] = useState(null);
   const [openSection,setOpentSection]=useState({})
+  const [isAlreadyEnrolled,setIsAlreadyEnrolled]=useState(true)
+  const [playerData,setPlayerData]=useState(null)
 
   const { allCourses, calculateRating ,calculateCourseDuration,calculateNoOfLectures,calculateChapterTime,currency} = useContext(AppContext);
 
@@ -20,7 +24,7 @@ const CourseDetail = () => {
 
   useEffect(() => {
     fetchCourseData();
-  }, []);
+  }, [allCourses]);
 
   const toggleSection=(index)=>{
     setOpentSection((prev)=>(
@@ -98,7 +102,9 @@ const CourseDetail = () => {
                               className='w-4 h-4 mt-1' />
                               <div className='flex items-center justify-between w-full text-gray-800 text-xs md:text-default'>
                                 <p>{lecture.lectureTitle}</p>
-                              <div className='flex gap-2'>{lecture.isPreviewFree && <p className='text-blue-500 cursor-pointer'>Preview</p> }</div>
+                              <div className='flex gap-2'>{lecture.isPreviewFree && <p onClick={()=>setPlayerData({
+                                videoId:lecture.lectureUrl.split('/').pop()
+                              })} className='text-blue-500 cursor-pointer'>Preview</p> }</div>
                               <p>{humanizeDuration(lecture.lectureDuration*60*1000,{units:['h','m']})}</p>
                               <p></p>
                               </div>
@@ -124,15 +130,15 @@ const CourseDetail = () => {
         {/* right column */}
         {/* <div className="max-w-course-cart z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px] "> */}
         <div
-  className="w-[441px] pb-[5px] max-w-course-cart z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-gray-300 min-w-[300px] sm:min-w-[420px]"
->
-  {/* Your content here */}
-{/* </div> */}
-
-          <img src={courseData.courseThumbnail} alt="" />
+  className="w-[441px] pb-[5px] max-w-course-cart z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-gray-300 min-w-[300px] sm:min-w-[420px]">
+      {
+         playerData? <YouTube videoId={playerData.videoId}opts={{playerVars:{autoplay:1}}} iframeClassName='w-full aspect-video' />
+         :
+         <img src={courseData.courseThumbnail} alt="thumbnail" /> 
+      }
           <div className='p-5'>
               <div className='flex items-center gap-2'>
-                <img src={assets.time_left_clock_icon} alt="" />
+                  <img src={assets.time_left_clock_icon} alt="" className='w-3.5' />
                 <p className='text-red-500'> <span>5 days</span>  left at this price !</p>
               </div>
               <div className='flex gap-3 items-center pt-2'>
@@ -145,10 +151,34 @@ const CourseDetail = () => {
                 <img src={assets.star} alt="" />
                 <p>{calculateRating(courseData)}</p>
               </div>
+              <div className='h-4 w-px bg-gray-500/400'> </div>
+              <div className='flex items-center gap-1'>
+                <img src={assets.time_clock_icon} alt="time clock" />
+                <p>{calculateCourseDuration(courseData)}</p>
               </div>
+              <div className='h-4 w-px bg-gray-500/400'> </div>
+              <div className='flex items-center gap-1'>
+                <img src={assets.lesson_icon} alt="time clock" />
+                <p>{calculateNoOfLectures(courseData)}lessions</p>
+              </div>
+              </div>
+             <button
+             className='md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium'
+             >{isAlreadyEnrolled ? 'Already Enrolled' :'Enroll Now'}</button>
+             <div className='pt-6'>
+              <p className='md:text-xl text-lg font-medium text-gray-800'>What's in the course?</p>
+              <ul className='md-4 pt-2 text-sm md:text-default list-disc text-gray-500'>
+                <li>Lifetime access with free updates.</li>
+                <li>Stet-by-step , hands-on project quidence.</li>
+                <li>Lifetime access with free updates.</li>
+                <li>Quizzes to test your knowledge.</li>
+                <li>Certificate of completion.</li>
+              </ul>
+             </div>
           </div>
         </div>
       </div>
+      <Footer></Footer>
     </>
   ) : (
     <Loading />
