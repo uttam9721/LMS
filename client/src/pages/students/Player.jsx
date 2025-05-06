@@ -1,8 +1,36 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
+import { useParams } from 'react-router-dom'
+import { assets } from '../../assets/assets'
 
 const Player = () => {
-  const [entrolledCourse,calculateChapterTime]=useContext(AppContext)
+  const [entrolledCourses,calculateChapterTime]=useContext(AppContext)
+  const {courseId} = useParams()
+  const [courseData,setCourseData] = useState(null)
+  const [openSections,setOpenSections] = useState({})
+  const [playerData,setPlayerData] = useState(null)
+
+
+  const getCourseData =()=>{
+    entrolledCourses.map((course)=>{
+      if(course._id===courseId){
+        setCourseData(course)
+        // setCourseData(course)
+      }
+    })
+  }
+
+  const toggleSection=(index)=>{
+    setOpenSections((prev)=>(
+      {...prev,[index]:!prev[index],
+
+      }
+    ))
+  }
+
+  useEffect(()=>{
+    getCourseData()
+  },[])
   return (
     <>
   <div className='p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36'>
@@ -11,7 +39,7 @@ const Player = () => {
     {/* <div className='text-gray-800'> */}
       <h2 className='text-xl font-semibold'>Course Structure</h2>
       <div className="pt-5">
-                        {courseData.courseContent.map((chapter,index)=>(
+                        {courseData && courseData.courseContent.map((chapter,index)=>(
                           <div
                           className='border border-gray-300 bg-white mb-2 rouded'
                           key={index}>
@@ -32,7 +60,7 @@ const Player = () => {
                               <ul className='list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border-t border-gray-300'>
                                 {chapter.chapterContent.map((lecture,i)=>(
                                   <li key={i} className='flex items-start gap-2 py-1'>
-                                    <img src={assets.play_icon} alt="" 
+                                    <img src={false ? assets.blue_tick_icon : assets.play_icon} alt="" 
                                     className='w-4 h-4 mt-1' />
                                     <div className='flex items-center justify-between w-full text-gray-800 text-xs md:text-default'>
                                       <p>{lecture.lectureTitle}</p>

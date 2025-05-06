@@ -22,7 +22,6 @@ const MyEnrollments = () => {
     {lectureCompleted:2 ,totalLectures:4},
     {lectureCompleted:2 ,totalLectures:2},
     {lectureCompleted:2 ,totalLectures:5},
-    // {lectureCompleted:2,totalLectures:4},
 
   ])
 
@@ -58,7 +57,7 @@ const MyEnrollments = () => {
                   {progressArray[index]&& `${progressArray[index].lectureCompleted}/${progressArray[index].lectureCompleted}`}<span>Lectures</span>
                 </td>
                 <td className='px-4 py-3 max-sm:text-right'>
-                  <button onClick={()=>navigate('/player/+course._id')} className='bg-blue-600 text-white-700 cursor-pointer px-3 py-1 rounded'>
+                  <button onClick={()=>navigate('/player/' + course._id)} className='bg-blue-600 text-white-700 cursor-pointer px-3 py-1 rounded'>
                     {progressArray[index]&& progressArray[index].lectureCompleted/progressArray[index].totalLectures===1 ? 'Completed':'On Going'}
 
                     </button>
