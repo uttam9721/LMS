@@ -19,6 +19,8 @@ const Player = () => {
     if (selectedCourse) {
       setCourseData(selectedCourse)
       // setCourseData(selectedCourse)
+      // setCourseData(selectedCourse)
+      // setCourseData(selectedCourse)
     }
   }
 
