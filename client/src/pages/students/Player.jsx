@@ -18,9 +18,6 @@ const Player = () => {
     const selectedCourse = enrolledCourses.find((course) => course._id === courseId)
     if (selectedCourse) {
       setCourseData(selectedCourse)
-      // setCourseData(selectedCourse)
-      // setCourseData(selectedCourse)
-      // setCourseData(selectedCourse)
     }
   }
 
