@@ -5,6 +5,7 @@ import { assets } from '../../assets/assets'
 import humanizeDuration from 'humanize-duration'
 import YouTube from 'react-youtube';
 import Footer from '../../components/students/Footer'
+import Rating from './../../components/students/Rating';
 const Player = () => {
   // ✅ Corrected destructuring from context
   const { enrolledCourses, calculateChapterTime } = useContext(AppContext)
@@ -18,7 +19,6 @@ const Player = () => {
     const selectedCourse = enrolledCourses.find((course) => course._id === courseId)
     if (selectedCourse) {
       setCourseData(selectedCourse)
-      // setCourseData(selectedCourse)
     }
   }
 
@@ -110,6 +110,11 @@ const Player = () => {
                   </div>
                 </div>
               ))}
+          </div>
+
+          <div className='flex item-center gap-2 py-3 mt-10'>
+            <h1 className='text-xl font-bold'>Rate this course:</h1>
+            <Rating initialRating={0} />
           </div>
         </div>
 
